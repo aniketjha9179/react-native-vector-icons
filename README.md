@@ -33,11 +33,6 @@ If you want to use `.svg` files natively – try [`react-native-vector-image`](h
 
 If you find the library useful, please consider [sponsoring](https://github.com/sponsors/oblador). Things I have planned is to split up the repo into a monorepo, that would enable individual versioning of icon sets, better performance, smaller bundle and easier for the community to publish their own.
 
-## Code Search
-[Documatic](https://www.documatic.com/) is sponsoring this library and provides their codebase search engine to the our community free of charge. Previously there wasn't a week when I didn't scream at the computer because our code search was so bad at my company – I would seriously consider it if you have a non-trivally sized repo. Help this library and yourself by asking it your questions about vector icons at [askyourcode.com](https://askyourcode.com/?lib=react-native-vector-icons) or get their [VSCode extension](https://marketplace.visualstudio.com/items?itemName=Documatic.documatic)!
-
-<a href="https://askyourcode.com/?lib=react-native-vector-icons"><img src="https://user-images.githubusercontent.com/378279/198386344-1849fa40-1846-487b-a81c-529fed1c98da.gif" width="840" height="530" alt="Documatic screen cast"></a>
-
 ## Bundled Icon Sets
 
 [Browse all](https://oblador.github.io/react-native-vector-icons/).
@@ -46,12 +41,13 @@ If you find the library useful, please consider [sponsoring](https://github.com/
 - [`Entypo`](http://entypo.com) by Daniel Bruce (v1.0.1 **411** icons)
 - [`EvilIcons`](http://evil-icons.io) by Alexander Madyankin & Roman Shamin (v1.10.1, **70** icons)
 - [`Feather`](http://feathericons.com) by Cole Bemis & Contributors (v4.28.0, **286** icons)
-- [`FontAwesome`](https://fontawesome.com/v4/icons/) by Dave Gandy (v4.7.0, **675** icons)
+- [`FontAwesome`](http://fortawesome.github.io/Font-Awesome/icons/) by Dave Gandy (v4.7.0, **675** icons)
 - [`FontAwesome 5`](https://fontawesome.com/v5/icons/) by Fonticons, Inc. (v5.15.3, 1598 (free) **7848** (pro) icons)
+- [`FontAwesome 6`](https://fontawesome.com) by Fonticons, Inc. (v6.1.2, 2016 (free) **16150** (pro) icons)
 - [`Fontisto`](https://github.com/kenangundogan/fontisto) by Kenan Gündoğan (v3.0.4, **615** icons)
 - [`Foundation`](http://zurb.com/playground/foundation-icon-fonts-3) by ZURB, Inc. (v3.0, **283** icons)
-- [`Ionicons`](https://ionicons.com/) by Ionic (v5.0.1, **1227** icons)
-- [`MaterialIcons`](https://www.google.com/design/icons/) by Google, Inc. (v4.0.0, **1517** icons)
+- [`Ionicons`](https://ionicons.com/) by Ionic (v7.1.0, **1338** icons)
+- [`MaterialIcons`](https://www.google.com/design/icons/) by Google, Inc. (v4.0.0, **2189** icons)
 - [`MaterialCommunityIcons`](https://materialdesignicons.com/) by MaterialDesignIcons.com (v6.5.95, **6596** icons)
 - [`Octicons`](http://octicons.github.com) by Github, Inc. (v16.3.1, **250** icons)
 - [`Zocial`](http://zocial.smcllns.com/) by Sam Collins (v1.4.0, **100** icons)
@@ -61,7 +57,7 @@ If you find the library useful, please consider [sponsoring](https://github.com/
 
 1. Run: `$ npm install --save react-native-vector-icons`
 2. For each platform (iOS/Android/Windows) you plan to use, follow one of the options for the corresponding platform.
-3. If you intend to use FontAwesome 5, check out [`this guide`](FONTAWESOME5.md) to get you started.
+3. Check out these guides if you intend to use FontAwesome 5 or 6 to get you started: [`FontAwesome 5`](FONTAWESOME5.md) [`FontAwesome 6`](FONTAWESOME6.md)
 
 ### iOS
 
@@ -85,6 +81,9 @@ If you want to use any of the bundled icons, you need to add the icon fonts to y
     <string>FontAwesome5_Brands.ttf</string>
     <string>FontAwesome5_Regular.ttf</string>
     <string>FontAwesome5_Solid.ttf</string>
+    <string>FontAwesome6_Brands.ttf</string>
+    <string>FontAwesome6_Regular.ttf</string>
+    <string>FontAwesome6_Solid.ttf</string>
     <string>Foundation.ttf</string>
     <string>Ionicons.ttf</string>
     <string>MaterialIcons.ttf</string>
@@ -138,8 +137,43 @@ project.ext.vectoricons = [
     iconFontNames: [ 'MaterialIcons.ttf', 'EvilIcons.ttf' ] // Name of the font files you want to copy
 ]
 
-apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle");
 ```
+
+<details>
+<summary>Monorepo configuration</summary>
+
+<!-- ##### Monorepo configuration -->
+<br>
+If you are working in a monorepo, you'll need to point to the correct location of the `fonts.gradle` script and of the Font files, **relative to the android/app/build.gradle file**. For example if your repo uses this common structure:
+  
+  
+```text
+your-monorepo/
+├─ node_modules/
+│  ├─ react-native-vector-icons
+├─ apps/
+│  ├─ YourApp/
+│  │  ├─ android/
+│  │  │  ├─ app/
+│  │  │  │  ├─ build.gradle
+```
+
+you will need to update the paths to:
+
+```diff
+project.ext.vectoricons = [
++ iconFontsDir: "../../../../node_modules/react-native-vector-icons/Fonts",
+  iconFontNames: ["WhateverFonts", "..."]
+]
+
+- apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
++ apply from: "../../../../node_modules/react-native-vector-icons/fonts.gradle
+```
+
+⚠️ There have been [reported issues](https://github.com/oblador/react-native-vector-icons/issues/1281#issuecomment-1363201537) when using RNVI < 9.0.0 in a monorepo, so make sure you are on 9+.
+
+</details>
 
 #### Option: Manually
 
@@ -555,7 +589,7 @@ function MyTabs() {
   return (
     <Tab.Navigator
       initialRouteName="Feed"
-      tabBarOptions={{
+      screenOptions={{
         activeTintColor: '#e91e63',
       }}
     >

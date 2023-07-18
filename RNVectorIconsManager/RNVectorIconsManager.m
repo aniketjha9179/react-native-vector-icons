@@ -151,10 +151,11 @@ RCT_EXPORT_METHOD(
     CFErrorRef errorRef = NULL;
     if (CTFontManagerRegisterGraphicsFont(font, &errorRef) == NO) {
       NSError *error = (__bridge NSError *)errorRef;
-      if (error.code == kCTFontManagerErrorAlreadyRegistered) {
+      if (error.code == kCTFontManagerErrorAlreadyRegistered || error.code == kCTFontManagerErrorDuplicatedName) {
         resolve(nil);
       } else {
-        reject(@"font_load_failed", @"Font failed to load", error);
+        NSString *errorMessage = [NSString stringWithFormat:@"Font '%@' failed to load", fontFileName];
+        reject(@"font_load_failed", errorMessage, error);
       }
     } else {
       resolve(nil);
